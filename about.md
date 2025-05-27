@@ -1,0 +1,1 @@
+Pointers is a mod that allows item edit trigger to use itemID as pointers
