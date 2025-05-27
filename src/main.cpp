@@ -4,15 +4,12 @@
 
 using namespace geode::prelude;
 
-// ---------------------------------------------------------------------------
-// Extend ItemTriggerGameObject with three boolean flags.
-// ---------------------------------------------------------------------------
 class $modify(ItemTriggerGameObject) {
 public:
     struct Fields {
-        bool m_ptrID1 = false;   // pointer mode for ItemID 1
-        bool m_ptrID2 = false;   // pointer mode for ItemID 2
-        bool m_ptrOut = false;   // pointer mode for Target ItemID
+        bool m_ptrID1 = false;   
+        bool m_ptrID2 = false;  
+        bool m_ptrOut = false; 
     };
 
       int resolveID(int rawID, bool ptr, GJEffectManager* mgr) {
@@ -44,15 +41,10 @@ public:
         this->m_targetGroupID  = origOut;
     }
 
-
-    // IDs we’ll use inside the save-string
     static constexpr int kPtrID1  = 241;
     static constexpr int kPtrID2  = 242;
     static constexpr int kPtrOut  = 243;
 
-    // -----------------------------------------------------------------------
-    // 1. save → string  (add our 3 key/value pairs to the end)
-    // -----------------------------------------------------------------------
     gd::string getSaveString(GJBaseGameLayer* layer) override {
         log::info("getSaveString");
         gd::string out = ItemTriggerGameObject::getSaveString(layer);
@@ -68,9 +60,6 @@ public:
         return out; 
     }
 
-    // -----------------------------------------------------------------------
-    // 2. string → object  (read & remove our tokens, then call vanilla)
-    // -----------------------------------------------------------------------
     void customObjectSetup(gd::vector<gd::string>& params,
                         gd::vector<void*>&      extra) override
     {
@@ -78,11 +67,10 @@ public:
             return !params[key].empty() && std::stoi(params[key]) != 0;
         };
 
-        m_fields->m_ptrID1 = getBool(kPtrID1);   // 241
-        m_fields->m_ptrID2 = getBool(kPtrID2);   // 242
-        m_fields->m_ptrOut = getBool(kPtrOut);   // 243
+        m_fields->m_ptrID1 = getBool(kPtrID1);  
+        m_fields->m_ptrID2 = getBool(kPtrID2);  
+        m_fields->m_ptrOut = getBool(kPtrOut); 
 
-        // wipe them so vanilla doesn’t revisit
         params[kPtrID1].clear();
         params[kPtrID2].clear();
         params[kPtrOut].clear();
