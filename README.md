@@ -1,3 +1,3 @@
 Pointers is a mod that allows item edit trigger to use itemID as pointers
 
-This mod is the key to make C2gdasm possible
+This mod is the key that makes C2gdasm possible
