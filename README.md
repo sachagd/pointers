@@ -1,6 +1,6 @@
 Pointers is a mod that allows item edit trigger to use itemID as pointers
 
-## This mod was only made as an helper for me to make C2gdasm (another project of mine) possible so it's probably not usefull for you.
+## This mod was only made as a helper for me to make C2gdasm (another project of mine) possible so it's probably not usefull for you.
 
 It adds 3 new boolean properties to the item edit trigger, respectively for the itemID 1, the itemID2 and the target itemID.
 To modify the properties, copy an item edit trigger, paste it in some random txt, modify the value of the properties : 0 to disable it and 1 to unable it.
