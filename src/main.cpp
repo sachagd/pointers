@@ -78,3 +78,60 @@ public:
         ItemTriggerGameObject::customObjectSetup(params, extra);
     }
 };
+
+class $modify(SpawnTriggerGameObject) {
+public:
+    struct Fields { 
+        bool m_ptr = false; 
+    };
+
+      int resolveID(int rawID, bool ptr, GJEffectManager* mgr) {
+        return ptr ? mgr->countForItem(rawID) : rawID;
+    }
+
+    void triggerObject(
+        GJBaseGameLayer*          layer,
+        int                       unk1,
+        gd::vector<int> const*    unk2
+    ) override {
+        int orig   = this->m_itemID;            //trouver le nom ici
+
+        auto mgr = layer->m_effectManager;
+        int real = resolveID(orig,   m_fields->m_ptrID, mgr);
+
+        this->m_itemID         = real;
+
+        ItemTriggerGameObject::triggerObject(layer, unk1, unk2);
+
+        this->m_itemID         = orig;
+    }
+
+    static constexpr int kPtrID  = 241;
+
+    gd::string getSaveString(GJBaseGameLayer* layer) override {
+        log::info("getSaveString");
+        gd::string out = ItemTriggerGameObject::getSaveString(layer);
+
+        auto add = [&](int key, bool value) {
+            out += "," + std::to_string(key) + "," +
+                   std::to_string(value ? 1 : 0);
+        };
+        add(kPtrID,  m_fields->m_ptrID);
+
+        return out; 
+    }
+
+    void customObjectSetup(gd::vector<gd::string>& params,
+                        gd::vector<void*>&      extra) override
+    {
+        auto getBool = [&](size_t key) -> bool {
+            return !params[key].empty() && std::stoi(params[key]) != 0;
+        };
+
+        m_fields->m_ptrID = getBool(kPtrID);  
+
+        params[kPtrID].clear();
+
+        ItemTriggerGameObject::customObjectSetup(params, extra);
+    }
+};
