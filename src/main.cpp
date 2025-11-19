@@ -1,5 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/ItemTriggerGameObject.hpp>
+#include <Geode/modify/SpawnTriggerGameObject.hpp>
 #include <Geode/Bindings.hpp>
 
 using namespace geode::prelude;
@@ -81,57 +82,51 @@ public:
 
 class $modify(SpawnTriggerGameObject) {
 public:
-    struct Fields { 
-        bool m_ptr = false; 
+    struct Fields {
+        bool m_ptrTarget = false; // if true: treat target group as item pointer
     };
 
-      int resolveID(int rawID, bool ptr, GJEffectManager* mgr) {
+    static constexpr int kPtrTarget = 244;
+
+    int resolveID(int rawID, bool ptr, GJEffectManager* mgr) {
         return ptr ? mgr->countForItem(rawID) : rawID;
     }
 
     void triggerObject(
-        GJBaseGameLayer*          layer,
-        int                       unk1,
-        gd::vector<int> const*    unk2
+        GJBaseGameLayer*       layer,
+        int                    unk1,
+        gd::vector<int> const* unk2
     ) override {
-        int orig   = this->m_itemID;            //trouver le nom ici
+        int origTarget = this->m_targetGroupID;
 
-        auto mgr = layer->m_effectManager;
-        int real = resolveID(orig,   m_fields->m_ptrID, mgr);
+        auto mgr       = layer->m_effectManager;
+        int realTarget = resolveID(origTarget, m_fields->m_ptrTarget, mgr);
 
-        this->m_itemID         = real;
-
-        ItemTriggerGameObject::triggerObject(layer, unk1, unk2);
-
-        this->m_itemID         = orig;
+        this->m_targetGroupID = realTarget;
+        SpawnTriggerGameObject::triggerObject(layer, unk1, unk2);
+        this->m_targetGroupID = origTarget;
     }
-
-    static constexpr int kPtrID  = 241;
 
     gd::string getSaveString(GJBaseGameLayer* layer) override {
-        log::info("getSaveString");
-        gd::string out = ItemTriggerGameObject::getSaveString(layer);
+        gd::string out = SpawnTriggerGameObject::getSaveString(layer);
 
-        auto add = [&](int key, bool value) {
-            out += "," + std::to_string(key) + "," +
-                   std::to_string(value ? 1 : 0);
-        };
-        add(kPtrID,  m_fields->m_ptrID);
+        out += "," + std::to_string(kPtrTarget) + "," +
+               std::to_string(m_fields->m_ptrTarget ? 1 : 0);
 
-        return out; 
+        return out;
     }
 
-    void customObjectSetup(gd::vector<gd::string>& params,
-                        gd::vector<void*>&      extra) override
-    {
+    void customObjectSetup(
+        gd::vector<gd::string>& params,
+        gd::vector<void*>&      extra
+    ) override {
         auto getBool = [&](size_t key) -> bool {
             return !params[key].empty() && std::stoi(params[key]) != 0;
         };
 
-        m_fields->m_ptrID = getBool(kPtrID);  
+        m_fields->m_ptrTarget = getBool(kPtrTarget);
+        params[kPtrTarget].clear();
 
-        params[kPtrID].clear();
-
-        ItemTriggerGameObject::customObjectSetup(params, extra);
+        SpawnTriggerGameObject::customObjectSetup(params, extra);
     }
 };

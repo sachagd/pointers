@@ -1,12 +1,12 @@
 {
-	"geode": "4.5.0",
+	"geode": "4.9.0",
 	"gd": {
 		"win": "2.2074",
 		"mac": "2.2074"
 	},
 	"id": "sachagd.pointers",
 	"name": "pointers",
-	"version": "v1.0.2",
+	"version": "v1.1.0",
 	"developer": "sachagd",
 	"description": "",
 	"tags" : ["enhancement"]
