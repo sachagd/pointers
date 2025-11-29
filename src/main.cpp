@@ -65,7 +65,7 @@ public:
                         gd::vector<void*>&      extra) override
     {
         auto getBool = [&](size_t key) -> bool {
-            return !params[key].empty() && std::stoi(params[key]) != 0;
+            return !params[key].empty() && numFromString<int>(params[key]).unwrapOrDefault() != 0;
         };
 
         m_fields->m_ptrID1 = getBool(kPtrID1);  
@@ -121,7 +121,7 @@ public:
         gd::vector<void*>&      extra
     ) override {
         auto getBool = [&](size_t key) -> bool {
-            return !params[key].empty() && std::stoi(params[key]) != 0;
+            return !params[key].empty() && numFromString<int>(params[key]).unwrapOrDefault() != 0;
         };
 
         m_fields->m_ptrTarget = getBool(kPtrTarget);
